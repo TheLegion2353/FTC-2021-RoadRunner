@@ -41,7 +41,7 @@ public class MecanumDrivetrain extends RobotPart {
 		mecanum.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
 		headingController.setInputBounds(-Math.PI, Math.PI);
-		theta = 0.0;
+		theta = PoseStorage.currentPos.getHeading();
 		clock = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 	}
 

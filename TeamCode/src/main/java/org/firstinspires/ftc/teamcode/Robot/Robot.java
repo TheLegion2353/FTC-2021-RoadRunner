@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Robot;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -22,8 +23,21 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
 
 public class Robot {
+	public enum AutonomousPath {
+		BLUE_CLOSE_CAROUSEL_PARK,
+		BLUE_FAR_PARK,
+		RED_CLOSE_CAROUSEL_PARK,
+		RED_FAR_PARK
+	}
 	private ElapsedTime clock = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 	private MecanumDrivetrain drivetrain;
 	private Carousel carousel;
@@ -32,28 +46,67 @@ public class Robot {
 	private Intake intake;
 	private Gamepad gamepad = null;
 	private Telemetry telemetry = null;
-	private TrajectorySequence BlueCloseTrajecotry = null;
+	private TrajectorySequence BLUE_CLOSE_CAROUSEL_PARK_1_TRAJECTORY = null;
+	private TrajectorySequence BLUE_CLOSE_CAROUSEL_PARK_2_TRAJECTORY = null;
+	private TrajectorySequence BLUE_FAR_PARK = null;
+	private TrajectorySequence RED_CLOSE_CAROUSEL_PARK_TRAJECTORY = null;
+	private TrajectorySequence RED_FAR_PARK = null;
 
 	public Robot(Gamepad gp, Telemetry t, HardwareMap hwMap) {
 		telemetry = t;
 		gamepad = gp;
 		drivetrain = new MecanumDrivetrain(gamepad, telemetry, hwMap);
-		BlueCloseTrajecotry = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-			.lineToConstantHeading(new Vector2d(-62.5, 55.0))
-			.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
-				carousel.setSpeed(1.0);
-			})
-			.waitSeconds(3.0)
-			.addTemporalMarker(() -> {
-				carousel.setSpeed(0.0);
-			})
-			.lineToLinearHeading(new Pose2d(0.0, 60.0, 0.0))
-			.lineToConstantHeading(new Vector2d(60, 50))
+		BLUE_CLOSE_CAROUSEL_PARK_1_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+				.lineToConstantHeading(new Vector2d(-62.5, 55.0))
+				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
+					carousel.setSpeed(1.0);
+				})
+				.waitSeconds(3.5)
+				.addTemporalMarker(() -> {
+					carousel.setSpeed(0.0);
+				})
+				.lineToSplineHeading(new Pose2d(7.5, 63.5, 0.0))
+				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+				.lineToConstantHeading(new Vector2d(37, 64.0))
+				.resetVelConstraint()
+				.build();
+
+		BLUE_CLOSE_CAROUSEL_PARK_2_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+				.lineToConstantHeading(new Vector2d(-62.5, 55.0))
+				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
+					carousel.setSpeed(1.0);
+				})
+				.waitSeconds(3.5)
+				.addTemporalMarker(() -> {
+					carousel.setSpeed(0.0);
+				})
+				.lineToSplineHeading(new Pose2d(7.5, 63.5, 0.0))
+				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+				.lineToConstantHeading(new Vector2d(37, 64.0))
+				.resetVelConstraint()
+				.lineToConstantHeading(new Vector2d(37, 40.0))
+				.build();
+
+		BLUE_FAR_PARK = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+
 			.build();
+/*
+		RED_CLOSE_CAROUSEL_PARK_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+			.build();
+
+		RED_FAR_PARK = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+			.build();
+*/
+
 	}
 
-	public void runAuto() throws InterruptedException {
-		drivetrain.getDrivetrain().followTrajectorySequence(BlueCloseTrajecotry);
+	public void runAuto(AutonomousPath path) throws InterruptedException {
+		switch (path) {
+			case BLUE_CLOSE_CAROUSEL_PARK: {
+				drivetrain.getDrivetrain().followTrajectorySequence(BLUE_CLOSE_CAROUSEL_PARK_TRAJECTORY);
+			}
+
+		}
 	}
 
 	public void update() {
