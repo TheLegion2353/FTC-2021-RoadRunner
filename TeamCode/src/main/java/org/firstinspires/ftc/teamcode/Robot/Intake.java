@@ -21,9 +21,13 @@ public class Intake extends RobotPart {
 		if (gamepad.x) {
 			motorController.setSpeed(1.0);
 		} else if (gamepad.y) {
-			motorController.setSpeed(-1.0);
+			motorController.setSpeed(-.25);
 		} else {
 			motorController.setSpeed(0.0);
 		}
+	}
+
+	void setSpeed(double s) {
+		motorController.setSpeed(s);
 	}
 }

@@ -24,9 +24,9 @@ public class Carousel extends RobotPart {
 	@Override
 	public void driverUpdate() {
 		if (gamepad != null) {
-			if (gamepad.dpad_up) {
+			if (gamepad.dpad_left) {
 				motorController.setSpeed(1.0);
-			} else if (gamepad.dpad_down) {
+			} else if (gamepad.dpad_right) {
 				motorController.setSpeed(-1.0);
 			} else {
 				motorController.setSpeed(0.0);

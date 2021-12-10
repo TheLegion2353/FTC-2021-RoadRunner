@@ -33,9 +33,17 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
 
 public class Robot {
 	public enum AutonomousPath {
-		BLUE_CLOSE_CAROUSEL_PARK,
-		BLUE_FAR_PARK,
-		RED_CLOSE_CAROUSEL_PARK,
+		BLUE_CLOSE_CAROUSEL_PARK_1_TRAJECTORY,
+		BLUE_CLOSE_CAROUSEL_PARK_2_TRAJECTORY,
+		BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY,
+		BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY,
+		BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY,
+		BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY,
+		BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY,
+		BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY,
+		BLUE_FAR_1_PARK,
+		BLUE_FAR_2_PARK,
+		RED_CLOSE_CAROUSEL_PARK_TRAJECTORY,
 		RED_FAR_PARK
 	}
 	private ElapsedTime clock = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -48,7 +56,14 @@ public class Robot {
 	private Telemetry telemetry = null;
 	private TrajectorySequence BLUE_CLOSE_CAROUSEL_PARK_1_TRAJECTORY = null;
 	private TrajectorySequence BLUE_CLOSE_CAROUSEL_PARK_2_TRAJECTORY = null;
-	private TrajectorySequence BLUE_FAR_PARK = null;
+	private TrajectorySequence BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY = null;
+	private TrajectorySequence BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY = null;
+	private TrajectorySequence BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY = null;
+	private TrajectorySequence BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY = null;
+	private TrajectorySequence BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY = null;
+	private TrajectorySequence BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY = null;
+	private TrajectorySequence BLUE_FAR_1_PARK = null;
+	private TrajectorySequence BLUE_FAR_2_PARK = null;
 	private TrajectorySequence RED_CLOSE_CAROUSEL_PARK_TRAJECTORY = null;
 	private TrajectorySequence RED_FAR_PARK = null;
 
@@ -87,10 +102,104 @@ public class Robot {
 				.lineToConstantHeading(new Vector2d(37, 40.0))
 				.build();
 
-		BLUE_FAR_PARK = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+		BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+				.lineToConstantHeading(new Vector2d(-14.0, 40.0))  // go in front of the shipping hub
+				.addTemporalMarker(() -> {
+					arm.setPosition(1.715);
+				})
+				.waitSeconds(1.5)
+				.addTemporalMarker(() -> {
+					intake.setSpeed(-0.25);
+				})
+				.waitSeconds(1.0)
+				.addTemporalMarker(() -> {
+					intake.setSpeed(0.0);
+					arm.setPosition(1.35);
+				})
+				.lineToConstantHeading(new Vector2d(-62.5, 55.0))
+				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {  // go to the carousel thing
+					carousel.setSpeed(1.0);
+				})
+				.waitSeconds(3.5)
+				.addTemporalMarker(() -> {
+					carousel.setSpeed(0.0);
+				})
+				.lineToSplineHeading(new Pose2d(7.5, 63.5, 0.0))  // set up for going to the parking
+				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+ 				.lineToConstantHeading(new Vector2d(37, 64.0))  // go through the obstacle
+				.resetVelConstraint()
+				.build();
 
-			.build();
+		BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+				.lineToConstantHeading(new Vector2d())  // go in front of the shipping hub
+				.addTemporalMarker(() -> {
+					arm.setPosition(1.715);
+				})
+				.waitSeconds(1.5)
+				.addTemporalMarker(() -> {
+					slide.setPosition(-300.0);
+				})
+				.waitSeconds(2.0)
+				.addTemporalMarker(() -> {
+					intake.setSpeed(-0.25);
+				})
+				.waitSeconds(1.0)
+				.addTemporalMarker(() -> {
+					intake.setSpeed(0.0);
+					arm.setPosition(1.35);
+					slide.setPosition(0.0);
+				})
+				.lineToConstantHeading(new Vector2d(-62.5, 55.0))
+				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {  // go to the carousel thing
+					carousel.setSpeed(1.0);
+				})
+				.waitSeconds(3.5)
+				.addTemporalMarker(() -> {
+					carousel.setSpeed(0.0);
+				})
+				.lineToSplineHeading(new Pose2d(7.5, 63.5, 0.0))  // set up for going to the parking
+				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+				.lineToConstantHeading(new Vector2d(37, 64.0))  // go through the obstacle
+				.resetVelConstraint()
+				.build();
+
+		BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+				.lineToConstantHeading(new Vector2d())  // go in front of the shipping hub
+				.addTemporalMarker(() -> {
+					arm.setPosition(1.715);
+				})
+				.waitSeconds(1.5)
+				.addTemporalMarker(() -> {
+					slide.setPosition(-1600.0);
+				})
+				.waitSeconds(4.0)
+				.addTemporalMarker(() -> {
+					intake.setSpeed(-0.25);
+				})
+				.waitSeconds(1.0)
+				.addTemporalMarker(() -> {
+					intake.setSpeed(0.0);
+					arm.setPosition(1.35);
+					slide.setPosition(0.0);
+				})
+				.lineToConstantHeading(new Vector2d(-62.5, 55.0))
+				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {  // go to the carousel thing
+					carousel.setSpeed(1.0);
+				})
+				.waitSeconds(3.5)
+				.addTemporalMarker(() -> {
+					carousel.setSpeed(0.0);
+				})
+				.lineToSplineHeading(new Pose2d(7.5, 63.5, 0.0))  // set up for going to the parking
+				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+				.lineToConstantHeading(new Vector2d(37, 64.0))  // go through the obstacle
+				.resetVelConstraint()
+				.build();
+
 /*
+		BLUE_FAR_PARK = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+			.build();
+
 		RED_CLOSE_CAROUSEL_PARK_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
 			.build();
 
@@ -102,11 +211,20 @@ public class Robot {
 
 	public void runAuto(AutonomousPath path) throws InterruptedException {
 		switch (path) {
-			case BLUE_CLOSE_CAROUSEL_PARK: {
-				drivetrain.getDrivetrain().followTrajectorySequence(BLUE_CLOSE_CAROUSEL_PARK_TRAJECTORY);
+			case BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY: {
+				drivetrain.getDrivetrain().followTrajectorySequence(BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY);
 			}
-
 		}
+	}
+
+	public void autoUpdate() {
+		if (arm != null) {
+			arm.update();
+		} else {
+			telemetry.addLine("Intake null!");
+		}
+		telemetry.update();
+		clock.reset();
 	}
 
 	public void update() {
@@ -132,6 +250,12 @@ public class Robot {
 			slide.update();
 		} else {
 			telemetry.addLine("Linear slide null!");
+		}
+
+		if (intake != null) {
+			intake.update();
+		} else {
+			telemetry.addLine("Intake null!");
 		}
 
 		telemetry.update();
