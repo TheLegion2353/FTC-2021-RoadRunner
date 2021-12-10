@@ -65,7 +65,6 @@ public class MainAutonomous extends LinearOpMode {
 	public void runOpMode() throws InterruptedException {
 		telemetry.addData(">", "Initializing autonomous... DO NOT START");
 		telemetry.update();
-		PoseStorage.currentPos = new Pose2d(-36, 62, -Math.PI / 2);
 		robot = new Robot(null, telemetry, hardwareMap);
 		robot.setCarouselMotor(hardwareMap.get(DcMotorEx.class, "carousel/frontEncoder"));
 		robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
@@ -121,6 +120,8 @@ public class MainAutonomous extends LinearOpMode {
 		thread.start();
 
 		if (!isStopRequested()) {
+			// TODO: TEST ALL INDIVIDUALLY
+			// TODO: ADD OBJECT RECOGNITION AND PROPER PATHS FROM RECOGNIZED OBJECT LOCATION
 			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY);
 		}
 	}

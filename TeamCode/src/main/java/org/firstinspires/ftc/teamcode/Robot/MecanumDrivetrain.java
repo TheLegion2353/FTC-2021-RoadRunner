@@ -53,6 +53,9 @@ public class MecanumDrivetrain extends RobotPart {
 		mecanum.followTrajectory(trajectory);
 	}
 
+	public void setPoseEstimate(Pose2d pose) {
+		mecanum.setPoseEstimate(pose);
+	}
 	@Override
 	public void driverUpdate() {
 		Pose2d driveDirection = new Pose2d();
