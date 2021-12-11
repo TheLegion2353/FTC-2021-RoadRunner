@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.Red.Everything;
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -21,10 +21,10 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 
-@TeleOp(name="Test Auto", group="Autonomous")
-public class MainAutonomous extends LinearOpMode {
+@TeleOp(name="Red Close Everything Inner", group="Autonomous")
+public class RedCloseEverythingInner extends LinearOpMode {
 	private Robot robot = null;
-
+	private int duckLocation = 0;  // 0: left; 1: middle; 2: right
 
 	// TENSOR FLOW RELATED STUFF BELOW
 	/* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
@@ -38,6 +38,7 @@ public class MainAutonomous extends LinearOpMode {
 	 *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
 	 *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
 	 */
+
 	private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
 	private static final String[] LABELS = {
 			"Ball",
@@ -120,25 +121,19 @@ public class MainAutonomous extends LinearOpMode {
 		thread.start();
 
 		if (!isStopRequested()) {
-			// TODO: TEST ALL INDIVIDUALLY
-			// TODO: ADD OBJECT RECOGNITION AND PROPER PATHS FROM RECOGNIZED OBJECT LOCATION
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY);
+			switch (duckLocation) {
+				case 0: {
+					robot.runAuto(Robot.AutonomousPath.RED_CLOSE_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY);
+				} break;
 
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY);
+				case 1: {
+					robot.runAuto(Robot.AutonomousPath.RED_CLOSE_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY);
+				} break;
 
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY);
-
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY);
-
-
+				case 2: {
+					robot.runAuto(Robot.AutonomousPath.RED_CLOSE_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY);
+				} break;
+			}
 			requestOpModeStop();
 		}
 	}

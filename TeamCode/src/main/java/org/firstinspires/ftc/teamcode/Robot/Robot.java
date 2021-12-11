@@ -369,7 +369,6 @@ public class Robot {
 			}
 
 			// BLUE PARK ONLY
-
 			case BLUE_CLOSE_PARK_1_TRAJECTORY: {
 				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, -62.0, Math.PI / 2.0));
 				drivetrain.getDrivetrain().followTrajectorySequence(BLUE_PARK_TRAJECTORY);
