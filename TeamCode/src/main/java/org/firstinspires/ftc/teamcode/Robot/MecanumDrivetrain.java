@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -37,11 +36,9 @@ public class MecanumDrivetrain extends RobotPart {
 		super(gp);
 		telemetry = tel;
 		mecanum = new SampleMecanumDrive(hwMap);
-		mecanum.setPoseEstimate(PoseStorage.currentPos);
 		mecanum.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
 		headingController.setInputBounds(-Math.PI, Math.PI);
-		theta = PoseStorage.currentPos.getHeading();
 		clock = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 	}
 

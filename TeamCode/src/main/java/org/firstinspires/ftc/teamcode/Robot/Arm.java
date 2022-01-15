@@ -9,7 +9,7 @@ import org.checkerframework.checker.index.qual.LTEqLengthOf;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Arm extends RobotPart {
-	private double kP = 3.5;
+	private double kP = 2.0;
 	private double kI = 2.0;
 	private double kD = 0.3;
 	private double position = 0.0;
@@ -29,18 +29,19 @@ public class Arm extends RobotPart {
 	@Override
 	public void driverUpdate() {
 		if (gamepad != null) {
-			position += (gamepad.right_trigger - gamepad.left_trigger) * 0.5 * pid.getElapsedTime();
-			if (position > 2.0) {
-				position = 2.0;
+			position += (gamepad.right_trigger - gamepad.left_trigger) * 1.5 * pid.getElapsedTime();
+			if (position > 3.2) {
+				position = 3.2;
 			}
-			if (position < 0.3) {
-				position = 0.3;
+			if (position < 0.1) {
+				position = 0.1;
 			}
 			pid.setSetPoint(position);
 			double voltage = pid.PIDLoop(motorController.getVoltage());
 			motorController.setSpeed(voltage);
 			telemetry.addData("Setpoint: ", position);
 			telemetry.addData("Position: ", motorController.getVoltage());
+			telemetry.addData("Arm Voltage: ", voltage);
 		}
 	}
 

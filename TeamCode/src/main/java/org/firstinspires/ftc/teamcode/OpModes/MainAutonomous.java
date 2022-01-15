@@ -1,30 +1,23 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.sun.tools.javac.Main;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.Robot.Robot;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 
 @TeleOp(name="Test Auto", group="Autonomous")
 public class MainAutonomous extends LinearOpMode {
 	private Robot robot = null;
-
+	private int duckLocation = 0;
 
 	// TENSOR FLOW RELATED STUFF BELOW
 	/* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
@@ -70,7 +63,7 @@ public class MainAutonomous extends LinearOpMode {
 		robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
 		robot.setLinearSlide(hardwareMap.get(DcMotorEx.class, "slide"));
 		robot.setIntake(hardwareMap.get(DcMotorEx.class, "intake/rightEncoder"));
-		/*
+
 		initVuforia();
 		initTfod();
 
@@ -83,7 +76,7 @@ public class MainAutonomous extends LinearOpMode {
 			// to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
 			// should be set to the value of the images used to create the TensorFlow Object Detection model
 			// (typically 16/9).
-			tfod.setZoom(2.5, 16.0/9.0);
+			tfod.setZoom(1.0, 16.0/9.0);
 		}
 
 		while (!isStarted()) {
@@ -95,12 +88,24 @@ public class MainAutonomous extends LinearOpMode {
 					telemetry.addData("# Object Detected", updatedRecognitions.size());
 					// step through the list of recognitions and display boundary info.
 					int i = 0;
+					duckLocation = 0;
 					for (Recognition recognition : updatedRecognitions) {
-						telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-						telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-								recognition.getLeft(), recognition.getTop());
-						telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-								recognition.getRight(), recognition.getBottom());
+						if (recognition.getLabel().equals("Duck")) {
+							if (recognition.getLeft() > 200.0 && recognition.getLeft() < 300.0) {
+								duckLocation = 1;
+							} else if (duckLocation > 300.0) {
+								duckLocation = 2;
+							} else {
+								duckLocation = 0;
+							}
+							telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+							telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+									recognition.getLeft(), recognition.getTop());
+						} else {
+							telemetry.addData("Non-duck object: ", recognition.getLabel());
+							telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+									recognition.getLeft(), recognition.getTop());
+						}
 						i++;
 					}
 					telemetry.update();
@@ -108,7 +113,7 @@ public class MainAutonomous extends LinearOpMode {
 			}
 		}
 
-		 */
+
 		waitForStart();
 		Thread thread = new Thread() {
 			public void run() {
@@ -122,22 +127,22 @@ public class MainAutonomous extends LinearOpMode {
 		if (!isStopRequested()) {
 			// TODO: TEST ALL INDIVIDUALLY
 			// TODO: ADD OBJECT RECOGNITION AND PROPER PATHS FROM RECOGNIZED OBJECT LOCATION
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY);
+			robot.runAuto(Robot.AutonomousPath.TEST_TRAJECTORY, this);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY, this);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY);
 
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY);
 
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY);
 
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY);
-			robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY);
-
+			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY);
+			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY);
 
 			requestOpModeStop();
 		}

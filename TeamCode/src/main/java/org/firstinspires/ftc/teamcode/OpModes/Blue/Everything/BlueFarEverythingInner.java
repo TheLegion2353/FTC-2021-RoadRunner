@@ -1,23 +1,16 @@
 package org.firstinspires.ftc.teamcode.OpModes.Blue.Everything;
 
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.sun.tools.javac.Main;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.Robot.Robot;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 
@@ -70,7 +63,6 @@ public class BlueFarEverythingInner extends LinearOpMode {
 		robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
 		robot.setLinearSlide(hardwareMap.get(DcMotorEx.class, "slide"));
 		robot.setIntake(hardwareMap.get(DcMotorEx.class, "intake/rightEncoder"));
-		/*
 		initVuforia();
 		initTfod();
 
@@ -83,7 +75,7 @@ public class BlueFarEverythingInner extends LinearOpMode {
 			// to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
 			// should be set to the value of the images used to create the TensorFlow Object Detection model
 			// (typically 16/9).
-			tfod.setZoom(2.5, 16.0/9.0);
+			tfod.setZoom(1.0, 16.0/9.0);
 		}
 
 		while (!isStarted()) {
@@ -95,20 +87,30 @@ public class BlueFarEverythingInner extends LinearOpMode {
 					telemetry.addData("# Object Detected", updatedRecognitions.size());
 					// step through the list of recognitions and display boundary info.
 					int i = 0;
+					duckLocation = 0;
 					for (Recognition recognition : updatedRecognitions) {
-						telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-						telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-								recognition.getLeft(), recognition.getTop());
-						telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-								recognition.getRight(), recognition.getBottom());
+						if (recognition.getLabel().equals("Duck")) {
+							if (recognition.getLeft() > 200.0 && recognition.getLeft() < 300.0) {
+								duckLocation = 1;
+							} else if (duckLocation > 300.0) {
+								duckLocation = 2;
+							} else {
+								duckLocation = 0;
+							}
+							telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+							telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+									recognition.getLeft(), recognition.getTop());
+						} else {
+							telemetry.addData("Non-duck object: ", recognition.getLabel());
+							telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+									recognition.getLeft(), recognition.getTop());
+						}
 						i++;
 					}
 					telemetry.update();
 				}
 			}
 		}
-
-		 */
 		waitForStart();
 		Thread thread = new Thread() {
 			public void run() {
@@ -122,15 +124,15 @@ public class BlueFarEverythingInner extends LinearOpMode {
 		if (!isStopRequested()) {
 			switch (duckLocation) {
 				case 0: {
-					robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY);
+					robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY, this);
 				} break;
 
 				case 1: {
-					robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY);
+					robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY, this);
 				} break;
 
 				case 2: {
-					robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY);
+					robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY, this);
 				} break;
 			}
 			requestOpModeStop();
