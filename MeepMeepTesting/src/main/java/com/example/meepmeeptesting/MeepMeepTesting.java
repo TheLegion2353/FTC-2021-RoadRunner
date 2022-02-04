@@ -13,7 +13,7 @@ public class MeepMeepTesting {
 		MeepMeep meepMeep = new MeepMeep(800);
 
 		RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-				.setStartPose(new Pose2d(10.0, -62.0, Math.PI / 2.0))
+				.setStartPose(new Pose2d(-10.0, -62.0, Math.PI / 2.0))
 				// Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
 				.setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
 
@@ -32,7 +32,7 @@ public class MeepMeepTesting {
 									//intake.setSpeed(0.0);
 									//arm.setPosition(1.35);
 								})
-								.lineToConstantHeading(new Vector2d(-62.5, -56.5))  // go to the carousel thing
+								.lineToLinearHeading(new Pose2d(-64.0, -52.5, Math.PI / 4.0))  // go to the carousel thing
 								.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
 									//carousel.setSpeed(1.0);
 								})
@@ -40,9 +40,7 @@ public class MeepMeepTesting {
 								.addTemporalMarker(() -> {
 									//carousel.setSpeed(0.0);
 								})
-								.lineToSplineHeading(new Pose2d(7.5, -64, 0.0))  // set up for going to the parking
-								//.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
-								.lineToConstantHeading(new Vector2d(37, -64.5))  // go through the obstacle
+								.lineToLinearHeading(new Pose2d(-60, -34, Math.PI / 2.0))  // park
 								.resetVelConstraint()
 								.build()
 				);

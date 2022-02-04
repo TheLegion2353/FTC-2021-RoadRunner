@@ -33,6 +33,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
 
 public class Robot {
 	public enum AutonomousPath {
+		BLUE_CLOSE_EVERYTHING,
 		BLUE_CLOSE_PARK_1_TRAJECTORY,
 		BLUE_CLOSE_PARK_2_TRAJECTORY,
 		BLUE_FAR_PARK_1_TRAJECTORY,
@@ -50,6 +51,7 @@ public class Robot {
 		BLUE_FAR_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY,
 		BLUE_FAR_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY,
 
+		RED_CLOSE_EVERYTHING,
 		RED_CLOSE_PARK_1_TRAJECTORY,
 		RED_CLOSE_PARK_2_TRAJECTORY,
 		RED_FAR_PARK_1_TRAJECTORY,
@@ -73,7 +75,7 @@ public class Robot {
 	private MecanumDrivetrain drivetrain = null;
 	private Carousel carousel;
 	private Arm arm;
-	private LinearSlide slide;
+	private Arm slide;
 	private Intake intake;
 	private Gamepad gamepad = null;
 	private Telemetry telemetry = null;
@@ -96,6 +98,12 @@ public class Robot {
 		telemetry = t;
 		gamepad = gp;
 		drivetrain = new MecanumDrivetrain(gamepad, telemetry, hwMap);
+
+		setCarouselMotor(hwMap.get(DcMotorEx.class, "carousel/frontEncoder"));
+		setArm(hwMap.get(DcMotorEx.class, "arm/leftEncoder"), hwMap.get(AnalogInput.class, "armPot"));
+		setLinearSlide(hwMap.get(DcMotorEx.class, "wrist"), hwMap.get(AnalogInput.class, "wristPot"));
+		slide.setBounds(0.65, 2.0);
+		setIntake(hwMap.servo.get("intakeServo"));
 	}
 
 	public Robot(Gamepad gp, Telemetry t, HardwareMap hwMap, AutonomousPath path) {
@@ -103,216 +111,58 @@ public class Robot {
 		gamepad = gp;
 		drivetrain = new MecanumDrivetrain(gamepad, telemetry, hwMap);
 
+		setCarouselMotor(hwMap.get(DcMotorEx.class, "carousel/frontEncoder"));
+		setArm(hwMap.get(DcMotorEx.class, "arm/leftEncoder"), hwMap.get(AnalogInput.class, "armPot"));
+		setLinearSlide(hwMap.get(DcMotorEx.class, "wrist"), hwMap.get(AnalogInput.class, "wristPot"));
+		slide.setBounds(0.65, 2.0);
+		setIntake(hwMap.servo.get("intakeServo"));
+
 		constructPaths(path);
-
-		/*
-		BLUE_CAROUSEL_LEVEL_1_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-				.lineToConstantHeading(new Vector2d(-14.0, 40.0))  // go in front of the shipping hub
-				.addTemporalMarker(() -> {
-					arm.setPosition(1.715);
-				})
-				.waitSeconds(1.5)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(-0.4);
-				})
-				.waitSeconds(1.0)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(0.0);
-					arm.setPosition(1.35);
-				})
-				.lineToConstantHeading(new Vector2d(-62.5, 56.5))  // go to the carousel thing
-				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
-					carousel.setSpeed(1.0);
-				})
-				.waitSeconds(3.5)
-				.addTemporalMarker(() -> {
-					carousel.setSpeed(0.0);
-				})
-				.lineToSplineHeading(new Pose2d(7.5, 64, 0.0))  // set up for going to the parking
-				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
-				.lineToConstantHeading(new Vector2d(37, 64.5))  // go through the obstacle
-				.resetVelConstraint()
-				.build();
-
-
-
-		BLUE_CAROUSEL_LEVEL_2_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-				.lineToConstantHeading(new Vector2d())  // go in front of the shipping hub
-				.addTemporalMarker(() -> {
-					arm.setPosition(1.715);
-					slide.setPosition(-300.0);
-				})
-				.waitSeconds(1.5)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(-0.4);
-				})
-				.waitSeconds(1.0)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(0.0);
-					slide.setPosition(0.0);
-				})
-				.lineToConstantHeading(new Vector2d(-60.0, 55.0))
-				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {  // go to the carousel thing
-					carousel.setSpeed(1.0);
-					arm.setPosition(1.35);
-				})
-				.waitSeconds(3.5)
-				.addTemporalMarker(() -> {
-					carousel.setSpeed(0.0);
-				})
-				.lineToSplineHeading(new Pose2d(7.5, 63.5, 0.0))  // set up for going to the parking
-				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
-				.lineToConstantHeading(new Vector2d(37, 64.0))  // go through the obstacle
-				.resetVelConstraint()
-				.build();
-
-		BLUE_CAROUSEL_LEVEL_3_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-				.lineToConstantHeading(new Vector2d())  // go in front of the shipping hub
-				.addTemporalMarker(() -> {
-					arm.setPosition(1.715);
-					slide.setPosition(-1600.0);
-
-				})
-				.waitSeconds(4.0)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(-0.4);
-
-				})
-				.waitSeconds(1.0)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(0.0);
-					slide.setPosition(-300.0);
-				})
-				.lineToConstantHeading(new Vector2d(-62.5, 55.0))
-				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {  // go to the carousel thing
-					carousel.setSpeed(1.0);
-					arm.setPosition(1.35);
-
-				})
-				.waitSeconds(3.5)
-				.addTemporalMarker(() -> {
-					carousel.setSpeed(0.0);
-				})
-				.lineToSplineHeading(new Pose2d(7.5, 63.5, 0.0))  // set up for going to the parking
-				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
-				.lineToConstantHeading(new Vector2d(37, 64.0))  // go through the obstacle
-				.resetVelConstraint()
-				.build();
-
-		BLUE_PARK_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
-				.lineToConstantHeading(new Vector2d(39.0, 62.0))
-				.resetVelConstraint()
-				.build();
-
-		RED_CAROUSEL_LEVEL_1_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-				.lineToConstantHeading(new Vector2d(-14.0, -40.0))  // go in front of the shipping hub
-				.addTemporalMarker(() -> {
-					arm.setPosition(1.715);
-				})
-				.waitSeconds(1.5)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(-0.4);
-				})
-				.waitSeconds(1.0)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(0.0);
-					arm.setPosition(1.35);
-				})
-				.lineToConstantHeading(new Vector2d(-62.5, -56.5))  // go to the carousel thing
-				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
-					carousel.setSpeed(1.0);
-				})
-				.waitSeconds(3.5)
-				.addTemporalMarker(() -> {
-					carousel.setSpeed(0.0);
-				})
-				.lineToSplineHeading(new Pose2d(7.5, -64, 0.0))  // set up for going to the parking
-				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
-				.lineToConstantHeading(new Vector2d(37, -64.5))  // go through the obstacle
-				.resetVelConstraint()
-				.build();
-
-		RED_CAROUSEL_LEVEL_2_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-				.lineToConstantHeading(new Vector2d())  // go in front of the shipping hub
-				.addTemporalMarker(() -> {
-					arm.setPosition(1.715);
-					slide.setPosition(-300.0);
-				})
-				.waitSeconds(1.5)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(-0.4);
-				})
-				.waitSeconds(1.0)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(0.0);
-					slide.setPosition(0.0);
-				})
-				.lineToConstantHeading(new Vector2d(-60.0, 55.0))
-				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {  // go to the carousel thing
-					carousel.setSpeed(1.0);
-					arm.setPosition(1.35);
-				})
-				.waitSeconds(3.5)
-				.addTemporalMarker(() -> {
-					carousel.setSpeed(0.0);
-				})
-				.lineToSplineHeading(new Pose2d(7.5, 63.5, 0.0))  // set up for going to the parking
-				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
-				.lineToConstantHeading(new Vector2d(37, 64.0))  // go through the obstacle
-				.resetVelConstraint()
-				.build();
-
-		RED_CAROUSEL_LEVEL_3_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-				.lineToConstantHeading(new Vector2d())  // go in front of the shipping hub
-				.addTemporalMarker(() -> {
-					arm.setPosition(1.715);
-					slide.setPosition(-1600.0);
-
-				})
-				.waitSeconds(4.0)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(-0.4);
-				})
-				.waitSeconds(1.0)
-				.addTemporalMarker(() -> {
-					intake.setSpeed(0.0);
-					slide.setPosition(-300.0);
-				})
-				.lineToConstantHeading(new Vector2d(-62.5, 55.0))
-				.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {  // go to the carousel thing
-					carousel.setSpeed(1.0);
-					arm.setPosition(1.35);
-
-				})
-				.waitSeconds(3.5)
-				.addTemporalMarker(() -> {
-					carousel.setSpeed(0.0);
-				})
-				.lineToSplineHeading(new Pose2d(7.5, 63.5, 0.0))  // set up for going to the parking
-				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
-				.lineToConstantHeading(new Vector2d(37, 64.0))  // go through the obstacle
-				.resetVelConstraint()
-				.build();
-
-		RED_PARK_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-				.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
-				.lineToConstantHeading(new Vector2d(39.0, -62.0))
-				.resetVelConstraint()
-				.build();
-
-		BLUE_PARK_INNER = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-				.strafeRight(23.0)
-				.build();
-
-		RED_PARK_INNER = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
-				.strafeLeft(23.0)
-				.build();
-		 */
 	}
 
 	public void constructPaths(AutonomousPath path) {
 		switch (path) {
+			case BLUE_CLOSE_EVERYTHING: {
+				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, 62.0, -Math.PI / 2.0));
+				FINAL_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+						.lineToConstantHeading(new Vector2d(-14.0, 55.0))  // go in front of the shipping hub
+						.waitSeconds(1.5)
+						.addTemporalMarker(() -> {
+							arm.setPosition(.46);
+							slide.setPosition(1.58);
+						})
+						.lineToConstantHeading(new Vector2d(-14.0, 40.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							arm.setPosition(1.715);
+						})
+						.waitSeconds(1.5)
+						.addTemporalMarker(() -> {
+							intake.setPosition(0.0);
+						})
+						.waitSeconds(0.5)
+						.addTemporalMarker(() -> {
+							arm.setPosition(2.0);
+							slide.setPosition(0.7);
+						})
+						.waitSeconds(0.5)
+						.addTemporalMarker(() -> {
+							arm.kill();
+							slide.kill();
+						})
+						.lineToConstantHeading(new Vector2d(-62.5, 56.5))  // go to the carousel thing
+						.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
+							carousel.setSpeed(0.5);
+						})
+						.waitSeconds(3.5)
+						.addTemporalMarker(() -> {
+							carousel.setSpeed(0.0);
+						})
+						.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+						.lineToConstantHeading(new Vector2d(-60, 34))  // park
+						.resetVelConstraint()
+						.build();
+			} break;
+
 			// BLUE LEVEL 1
 			case BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY: {  // test this first then basically copy for rest of levels
 				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, 62.0, -Math.PI / 2.0));
@@ -513,6 +363,35 @@ public class Robot {
 						.build();
 			} break;
 
+			case RED_CLOSE_EVERYTHING: {
+				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, -62.0, Math.PI / 2.0));
+				FINAL_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+						.lineToConstantHeading(new Vector2d(-14.0, -40.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							//arm.setPosition(1.715);
+						})
+						.waitSeconds(1.5)
+						.addTemporalMarker(() -> {
+							//intake.setSpeed(-0.4);
+						})
+						.waitSeconds(1.0)
+						.addTemporalMarker(() -> {
+							//intake.setSpeed(0.0);
+							//arm.setPosition(1.35);
+						})
+						.lineToLinearHeading(new Pose2d(-64.0, -52.5, Math.PI / 4.0))  // go to the carousel thing
+						.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
+							carousel.setSpeed(1.0);
+						})
+						.waitSeconds(3.5)
+						.addTemporalMarker(() -> {
+							carousel.setSpeed(0.0);
+						})
+						.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+						.lineToLinearHeading(new Pose2d(-60, -34, Math.PI / 2.0))  // park
+						.resetVelConstraint()
+						.build();
+			} break;
 
 			// RED LEVEL 1
 			case RED_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY: {  // test this first then basically copy for rest of levels
@@ -722,21 +601,24 @@ public class Robot {
 	}
 
 	public void runAuto(AutonomousPath path, OpMode opMode) throws InterruptedException {
+		constructPaths(path);
 		drivetrain.getDrivetrain().followTrajectorySequence(FINAL_TRAJECTORY);
 		opMode.requestOpModeStop();
 	}
 
 	public void autoUpdate() {
-		if (arm != null) {
-			arm.update();
-		} else {
-			telemetry.addLine("Intake null!");
-		}
+		if (true) {
+			if (arm != null) {
+				arm.update();
+			} else {
+				telemetry.addLine("Intake null!");
+			}
 
-		if (slide != null) {
-			slide.update();
-		} else {
-			telemetry.addLine("Slide null!");
+			if (slide != null) {
+				slide.update();
+			} else {
+				telemetry.addLine("Slide null!");
+			}
 		}
 		telemetry.update();
 		clock.reset();
@@ -764,7 +646,7 @@ public class Robot {
 		if (slide != null) {
 			slide.update();
 		} else {
-			telemetry.addLine("Linear slide null!");
+			telemetry.addLine("Wrist null!");
 		}
 
 		if (intake != null) {
@@ -786,11 +668,13 @@ public class Robot {
 		arm.setPotentiometer(pot);
 	}
 
-	public void setLinearSlide(DcMotorEx motor) {
-		slide = new LinearSlide(gamepad, motor, telemetry);
+	public void setLinearSlide(DcMotorEx motor, AnalogInput pot) {
+		slide = new Wrist(gamepad, motor, telemetry);
+		slide.setPotentiometer(pot);
+
 	}
 
-	public void setIntake(DcMotorEx motor) {
-		intake = new Intake(gamepad, motor, telemetry);
+	public void setIntake(Servo servo) {
+		intake = new Intake(gamepad, servo, telemetry);
 	}
 }

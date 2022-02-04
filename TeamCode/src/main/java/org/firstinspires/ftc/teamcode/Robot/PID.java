@@ -96,6 +96,13 @@ public class PID {
 		return eTime;
 	}
 
+	public void setErrorOverTimeMax(double max) {
+		errorOverTimeMax = max;
+	}
+
+	public void resetErrorOverTime() {
+		errorOverTime = 0.0;
+	}
 	// these private functions are only used internally to calculate the different values.
 	protected double calcP() {
 		return (error * kP);

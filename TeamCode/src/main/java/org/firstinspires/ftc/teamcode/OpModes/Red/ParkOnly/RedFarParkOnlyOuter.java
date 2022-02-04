@@ -16,10 +16,10 @@ public class RedFarParkOnlyOuter extends LinearOpMode {
 		telemetry.addData(">", "Initializing autonomous... DO NOT START");
 		telemetry.update();
 		robot = new Robot(null, telemetry, hardwareMap, Robot.AutonomousPath.RED_FAR_PARK_1_TRAJECTORY);
-		robot.setCarouselMotor(hardwareMap.get(DcMotorEx.class, "carousel/frontEncoder"));
-		robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
-		robot.setLinearSlide(hardwareMap.get(DcMotorEx.class, "slide"));
-		robot.setIntake(hardwareMap.get(DcMotorEx.class, "intake/rightEncoder"));
+		//robot.setCarouselMotor(hardwareMap.get(DcMotorEx.class, "carousel/frontEncoder"));
+		//robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
+		//robot.setLinearSlide(hardwareMap.get(DcMotorEx.class, "slide"));
+		//robot.setIntake(hardwareMap.get(DcMotorEx.class, "intake/rightEncoder"));
 		waitForStart();
 		Thread thread = new Thread() {
 			public void run() {

@@ -17,10 +17,10 @@ public class RedFarParkOnlyInner extends LinearOpMode {
 		telemetry.update();
 		robot = new Robot(null, telemetry, hardwareMap, Robot.AutonomousPath.RED_FAR_PARK_2_TRAJECTORY);
 		robot.constructPaths(Robot.AutonomousPath.RED_FAR_PARK_2_TRAJECTORY);
-		robot.setCarouselMotor(hardwareMap.get(DcMotorEx.class, "carousel/frontEncoder"));
-		robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
-		robot.setLinearSlide(hardwareMap.get(DcMotorEx.class, "slide"));
-		robot.setIntake(hardwareMap.get(DcMotorEx.class, "intake/rightEncoder"));
+		//robot.setCarouselMotor(hardwareMap.get(DcMotorEx.class, "carousel/frontEncoder"));
+		//robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
+		//robot.setLinearSlide(hardwareMap.get(DcMotorEx.class, "slide"));
+		//robot.setIntake(hardwareMap.get(DcMotorEx.class, "intake/rightEncoder"));
 		Thread thread = new Thread() {
 			public void run() {
 				while (!isStopRequested()) {

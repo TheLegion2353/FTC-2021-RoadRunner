@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes.Blue.Everything;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Robot.Robot;
 
 import java.util.List;
 
+@Disabled
 @TeleOp(name="Blue Far Everything Outer", group="Autonomous")
 public class BlueFarEverythingOuter extends LinearOpMode {
 	private Robot robot = null;
@@ -59,10 +61,10 @@ public class BlueFarEverythingOuter extends LinearOpMode {
 		telemetry.addData(">", "Initializing autonomous... DO NOT START");
 		telemetry.update();
 		robot = new Robot(null, telemetry, hardwareMap);
-		robot.setCarouselMotor(hardwareMap.get(DcMotorEx.class, "carousel/frontEncoder"));
-		robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
-		robot.setLinearSlide(hardwareMap.get(DcMotorEx.class, "slide"));
-		robot.setIntake(hardwareMap.get(DcMotorEx.class, "intake/rightEncoder"));
+		//robot.setCarouselMotor(hardwareMap.get(DcMotorEx.class, "carousel/frontEncoder"));
+		//robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
+		//robot.setLinearSlide(hardwareMap.get(DcMotorEx.class, "slide"));
+		//robot.setIntake(hardwareMap.get(DcMotorEx.class, "intake/rightEncoder"));
 		initVuforia();
 		initTfod();
 

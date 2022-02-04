@@ -14,10 +14,6 @@ public class MainTeleOp extends OpMode {
 	@Override
 	public void init() {
 		robot = new Robot(gamepad1, telemetry, hardwareMap);
-		robot.setCarouselMotor(hardwareMap.get(DcMotorEx.class, "carousel/frontEncoder"));
-		robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
-		//robot.setLinearSlide(hardwareMap.get(DcMotorEx.class, "slide"));
-		//robot.setIntake(hardwareMap.get(DcMotorEx.class, "intake/rightEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
 	}
 
 	@Override

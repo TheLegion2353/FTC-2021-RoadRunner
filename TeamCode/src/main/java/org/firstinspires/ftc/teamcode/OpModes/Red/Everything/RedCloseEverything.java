@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.Red.Everything;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -14,10 +15,10 @@ import org.firstinspires.ftc.teamcode.Robot.Robot;
 
 import java.util.List;
 
-@TeleOp(name="Test Auto", group="Autonomous")
-public class MainAutonomous extends LinearOpMode {
+@TeleOp(name="Red Close Everything", group="Autonomous")
+public class RedCloseEverything extends LinearOpMode {
 	private Robot robot = null;
-	private int duckLocation = 0;
+	private int duckLocation = 0;  // 0: left; 1: middle; 2: right
 
 	// TENSOR FLOW RELATED STUFF BELOW
 	/* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
@@ -58,11 +59,16 @@ public class MainAutonomous extends LinearOpMode {
 	public void runOpMode() throws InterruptedException {
 		telemetry.addData(">", "Initializing autonomous... DO NOT START");
 		telemetry.update();
-		robot = new Robot(null, telemetry, hardwareMap);
+		robot = new Robot(null, telemetry, hardwareMap, Robot.AutonomousPath.RED_CLOSE_EVERYTHING);
 		//robot.setCarouselMotor(hardwareMap.get(DcMotorEx.class, "carousel/frontEncoder"));
 		//robot.setArm(hardwareMap.get(DcMotorEx.class, "arm/leftEncoder"), hardwareMap.get(AnalogInput.class, "armPot"));
 		//robot.setLinearSlide(hardwareMap.get(DcMotorEx.class, "slide"));
 		//robot.setIntake(hardwareMap.get(DcMotorEx.class, "intake/rightEncoder"));
+
+
+		/*
+
+
 
 		initVuforia();
 		initTfod();
@@ -114,6 +120,14 @@ public class MainAutonomous extends LinearOpMode {
 		}
 
 
+
+
+
+
+		 */
+
+
+
 		waitForStart();
 		Thread thread = new Thread() {
 			public void run() {
@@ -125,25 +139,19 @@ public class MainAutonomous extends LinearOpMode {
 		thread.start();
 
 		if (!isStopRequested()) {
-			// TODO: TEST ALL INDIVIDUALLY
-			// TODO: ADD OBJECT RECOGNITION AND PROPER PATHS FROM RECOGNIZED OBJECT LOCATION
-			robot.runAuto(Robot.AutonomousPath.TEST_TRAJECTORY, this);
-			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY, this);
-			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY);
-			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY);
+			switch (duckLocation) {
+				case 0: {
+					robot.runAuto(Robot.AutonomousPath.RED_CLOSE_EVERYTHING, this);
+				} break;
 
-			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY);
-			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY);
-			//robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY);
+				case 1: {
+					robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY, this);
+				} break;
 
-			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY);
-			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_2_PARK_1_TRAJECTORY);
-			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_3_PARK_1_TRAJECTORY);
-
-			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_1_PARK_2_TRAJECTORY);
-			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY);
-			//robot.runAuto(Robot.AutonomousPath.BLUE_FAR_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY);
-
+				case 2: {
+					robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY, this);
+				} break;
+			}
 			requestOpModeStop();
 		}
 	}
