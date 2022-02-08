@@ -27,7 +27,7 @@ public class BlueCloseEverything extends LinearOpMode {
 		telemetry.addLine("Initializing autonomous... DO NOT START");
 		telemetry.update();
 
-		robot = new Robot(null, telemetry, hardwareMap, Robot.AutonomousPath.BLUE_CLOSE_EVERYTHING);
+		robot = new Robot(null, telemetry, hardwareMap);
 		vision = new Vision(hardwareMap);
 
 		telemetry.addLine("Ready to start.");
@@ -60,15 +60,15 @@ public class BlueCloseEverything extends LinearOpMode {
 		if (!isStopRequested()) {
 			switch (duckLocation) {
 				case 0: {
-					robot.runAuto(this);
+					robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_EVERYTHING1, this);
 				} break;
 
 				case 1: {
-					robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY, this);
+					robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_EVERYTHING2, this);
 				} break;
 
 				case 2: {
-					robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY, this);
+					robot.runAuto(Robot.AutonomousPath.BLUE_CLOSE_EVERYTHING3, this);
 				} break;
 			}
 			requestOpModeStop();

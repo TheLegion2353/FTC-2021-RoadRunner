@@ -11,8 +11,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Arm extends RobotPart {
 	protected double kP = 1.2;
-	protected double kI = 0.3;
-	protected double kD = 0.05;
+	protected double kI = 1.0;
+	protected double kD = 0.1;
 	protected double position = 0.0;
 	protected static int positionDetent = 0;
 	protected Telemetry telemetry = null;
@@ -30,11 +30,11 @@ public class Arm extends RobotPart {
 		telemetry = tel;
 		position = 0.0;
 		pid = new PID(kP, kI, kD, position);
-		pid.setErrorOverTimeMax(10);
+		pid.setErrorOverTimeMax(0.15);
 		motorController = new HardwareControllerEx(tel, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, null, motor);
 		motorController.setDirection(DcMotorSimple.Direction.REVERSE);
 		beginBound = 0.32;
-		endBound = 1.65;
+		endBound = 2.0;
 		leftBumper = false;
 		rightBumper = false;
 		manualOverride = true;
@@ -92,6 +92,8 @@ public class Arm extends RobotPart {
 		double voltage = pid.PIDLoop(motorController.getVoltage());
 		if (!kill) {
 			motorController.setSpeed(voltage);
+		} else {
+			motorController.setSpeed(0.0);
 		}
 		telemetry.addData("Setpoint: ", position);
 		telemetry.addData("Position: ", motorController.getVoltage());
@@ -99,7 +101,7 @@ public class Arm extends RobotPart {
 
 	protected void updatePositions() {
 		if (manualOverride) {
-			pid.updateConst(2.0, .75, .75);
+			pid.updateConst(1.2, 1.0, .1);
 			position += (gamepad.right_trigger - gamepad.left_trigger) * 1.5 * pid.getElapsedTime();
 			if (position > endBound) {
 				position = endBound;
@@ -110,8 +112,8 @@ public class Arm extends RobotPart {
 		} else {
 			switch (positionDetent) {
 				case 0: {  // back
-					position = 1.55;
-					pid.updateConst(1.2, 0.3, .05);
+					position = 1.8;
+					pid.updateConst(1.2, 1.0, .1);
 				}
 				break;
 
@@ -122,7 +124,7 @@ public class Arm extends RobotPart {
 				break;
 
 				case 2: {  // lvl 1
-					position = 0.46;
+					position = 0.41;
 					pid.updateConst(4, 1.0, .1);
 				}
 				break;
@@ -134,7 +136,7 @@ public class Arm extends RobotPart {
 				break;
 
 				case 4: {  // lvl 3
-					position = 0.89;
+					position = 0.95;
 					pid.updateConst(4, 1.0, .1);
 				}
 				break;
@@ -167,6 +169,7 @@ public class Arm extends RobotPart {
 	}
 
 	public void setPosition(double p) {
+		pid.resetErrorOverTime();
 		position = p;
 	}
 

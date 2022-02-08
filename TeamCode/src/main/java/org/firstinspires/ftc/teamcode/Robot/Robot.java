@@ -33,7 +33,9 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
 
 public class Robot {
 	public enum AutonomousPath {
-		BLUE_CLOSE_EVERYTHING,
+		BLUE_CLOSE_EVERYTHING1,
+		BLUE_CLOSE_EVERYTHING2,
+		BLUE_CLOSE_EVERYTHING3,
 		BLUE_CLOSE_PARK_1_TRAJECTORY,
 		BLUE_CLOSE_PARK_2_TRAJECTORY,
 		BLUE_FAR_PARK_1_TRAJECTORY,
@@ -51,7 +53,9 @@ public class Robot {
 		BLUE_FAR_CAROUSEL_LEVEL_2_PARK_2_TRAJECTORY,
 		BLUE_FAR_CAROUSEL_LEVEL_3_PARK_2_TRAJECTORY,
 
-		RED_CLOSE_EVERYTHING,
+		RED_CLOSE_EVERYTHING1,
+		RED_CLOSE_EVERYTHING2,
+		RED_CLOSE_EVERYTHING3,
 		RED_CLOSE_PARK_1_TRAJECTORY,
 		RED_CLOSE_PARK_2_TRAJECTORY,
 		RED_FAR_PARK_1_TRAJECTORY,
@@ -122,7 +126,99 @@ public class Robot {
 
 	public void constructPaths(AutonomousPath path) {
 		switch (path) {
-			case BLUE_CLOSE_EVERYTHING: {
+			case TEST_TRAJECTORY: {
+				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, 62.0, -Math.PI / 2.0));
+				FINAL_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+						.addTemporalMarker(() -> {
+							arm.setPosition(.41);
+							slide.setPosition(1.58);
+						})
+						.waitSeconds(5)
+						.addTemporalMarker(() -> {
+							arm.setPosition(2);
+							slide.setPosition(.5);
+						})
+						.waitSeconds(2)
+						.addTemporalMarker(() -> {
+							arm.kill();
+							slide.kill();
+						})
+						.waitSeconds(10)
+						.build();
+			} break;
+			case BLUE_CLOSE_EVERYTHING1: {
+				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, 62.0, -Math.PI / 2.0));
+				FINAL_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+						.lineToConstantHeading(new Vector2d(-14.0, 62.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							//arm.setPosition(.62);
+							//slide.setPosition(1.32);
+						})
+						.waitSeconds(5)
+						.lineToConstantHeading(new Vector2d(-14.0, 48.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							//intake.setPosition(0.0);
+						})
+						.waitSeconds(0.5)
+						.lineToConstantHeading(new Vector2d(-62.5, 57.5))  // go to the carousel thing
+						.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
+							carousel.setSpeed(0.5);
+						})
+						.waitSeconds(3.5)
+						.addTemporalMarker(() -> {
+							carousel.setSpeed(0.0);
+						})
+						.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+						.lineToConstantHeading(new Vector2d(-60, 36))  // park
+						.addTemporalMarker(() -> {
+							//arm.setPosition(2);
+							//slide.setPosition(.5);
+						})
+						.waitSeconds(2)
+						.addTemporalMarker(() -> {
+							//	arm.kill();
+							//	slide.kill();
+						})
+						.resetVelConstraint()
+						.build();
+			} break;
+			case BLUE_CLOSE_EVERYTHING2: {
+				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, 62.0, -Math.PI / 2.0));
+				FINAL_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+						.lineToConstantHeading(new Vector2d(-14.0, 62.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							arm.setPosition(.62);
+							slide.setPosition(1.32);
+						})
+						.waitSeconds(5)
+						.lineToConstantHeading(new Vector2d(-14.0, 48.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							intake.setPosition(0.0);
+						})
+						.waitSeconds(0.5)
+						.lineToConstantHeading(new Vector2d(-62.5, -56.5))  // go to the carousel thing
+						.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
+							carousel.setSpeed(0.5);
+						})
+						.waitSeconds(3.5)
+						.addTemporalMarker(() -> {
+							carousel.setSpeed(0.0);
+						})
+						.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+						.lineToConstantHeading(new Vector2d(-60, 34))  // park
+						.addTemporalMarker(() -> {
+							arm.setPosition(2);
+							slide.setPosition(.5);
+						})
+						.waitSeconds(2)
+						.addTemporalMarker(() -> {
+							arm.kill();
+							slide.kill();
+						})
+						.resetVelConstraint()
+						.build();
+			} break;
+			case BLUE_CLOSE_EVERYTHING3: {
 				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, 62.0, -Math.PI / 2.0));
 				FINAL_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
 						.lineToConstantHeading(new Vector2d(-14.0, 55.0))  // go in front of the shipping hub
@@ -162,7 +258,6 @@ public class Robot {
 						.resetVelConstraint()
 						.build();
 			} break;
-
 			// BLUE LEVEL 1
 			case BLUE_CLOSE_CAROUSEL_LEVEL_1_PARK_1_TRAJECTORY: {  // test this first then basically copy for rest of levels
 				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, 62.0, -Math.PI / 2.0));
@@ -363,32 +458,111 @@ public class Robot {
 						.build();
 			} break;
 
-			case RED_CLOSE_EVERYTHING: {
+			case RED_CLOSE_EVERYTHING1: {
 				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, -62.0, Math.PI / 2.0));
 				FINAL_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+						.lineToConstantHeading(new Vector2d(-14.0, -62.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							arm.setPosition(.95);
+							slide.setPosition(1.03);
+						})
+						.waitSeconds(5)
 						.lineToConstantHeading(new Vector2d(-14.0, -40.0))  // go in front of the shipping hub
 						.addTemporalMarker(() -> {
-							//arm.setPosition(1.715);
+							intake.setPosition(0.0);
 						})
-						.waitSeconds(1.5)
-						.addTemporalMarker(() -> {
-							//intake.setSpeed(-0.4);
-						})
-						.waitSeconds(1.0)
-						.addTemporalMarker(() -> {
-							//intake.setSpeed(0.0);
-							//arm.setPosition(1.35);
-						})
-						.lineToLinearHeading(new Pose2d(-64.0, -52.5, Math.PI / 4.0))  // go to the carousel thing
+						.waitSeconds(0.5)
+						.lineToLinearHeading(new Pose2d(-62.0, -52.5, 0.0))  // go to the carousel thing
 						.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
-							carousel.setSpeed(1.0);
+							carousel.setSpeed(-0.5);
 						})
 						.waitSeconds(3.5)
 						.addTemporalMarker(() -> {
 							carousel.setSpeed(0.0);
 						})
 						.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
-						.lineToLinearHeading(new Pose2d(-60, -34, Math.PI / 2.0))  // park
+						.lineToLinearHeading(new Pose2d(-60, -37, Math.PI / 2.0))  // park
+						.addTemporalMarker(() -> {
+							arm.setPosition(2);
+							slide.setPosition(.5);
+						})
+						.waitSeconds(2)
+						.addTemporalMarker(() -> {
+							arm.kill();
+							slide.kill();
+						})
+						.resetVelConstraint()
+						.build();
+			} break;
+			case RED_CLOSE_EVERYTHING2: {
+				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, -62.0, Math.PI / 2.0));
+				FINAL_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+						.lineToConstantHeading(new Vector2d(-14.0, -62.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							arm.setPosition(.62);
+							slide.setPosition(1.32);
+						})
+						.waitSeconds(5)
+						.lineToConstantHeading(new Vector2d(-14.0, -48.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							intake.setPosition(0.0);
+						})
+						.waitSeconds(0.5)
+						.lineToLinearHeading(new Pose2d(-62.0, -52.5, 0.0))  // go to the carousel thing
+						.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
+							carousel.setSpeed(-0.5);
+						})
+						.waitSeconds(3.5)
+						.addTemporalMarker(() -> {
+							carousel.setSpeed(0.0);
+						})
+						.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+						.lineToLinearHeading(new Pose2d(-60, -37, Math.PI / 2.0))  // park
+						.addTemporalMarker(() -> {
+							arm.setPosition(2);
+							slide.setPosition(.5);
+						})
+						.waitSeconds(2)
+						.addTemporalMarker(() -> {
+							arm.kill();
+							slide.kill();
+						})
+						.resetVelConstraint()
+						.build();
+			} break;
+			case RED_CLOSE_EVERYTHING3: {
+				drivetrain.getDrivetrain().setPoseEstimate(new Pose2d(-36.0, -62.0, Math.PI / 2.0));
+				FINAL_TRAJECTORY = drivetrain.getDrivetrain().trajectorySequenceBuilder(drivetrain.getDrivetrain().getPoseEstimate())
+						.lineToConstantHeading(new Vector2d(-14.0, -62.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							arm.setPosition(.41);
+							slide.setPosition(1.58);
+						})
+						.waitSeconds(5)
+						.lineToConstantHeading(new Vector2d(-14.0, -48.0))  // go in front of the shipping hub
+						.addTemporalMarker(() -> {
+							intake.setPosition(0.0);
+						})
+						.waitSeconds(0.5)
+						.lineToLinearHeading(new Pose2d(-62.0, -52.5, 0.0))  // go to the carousel thing
+						.UNSTABLE_addTemporalMarkerOffset(-0.5, () -> {
+							carousel.setSpeed(-0.5);
+						})
+						.waitSeconds(3.5)
+						.addTemporalMarker(() -> {
+							carousel.setSpeed(0.0);
+						})
+						.setVelConstraint(drivetrain.getDrivetrain().getVelocityConstraint(10.0, MAX_ANG_VEL, TRACK_WIDTH))
+						.lineToLinearHeading(new Pose2d(-60, -37, Math.PI / 2.0))  // park
+						.addTemporalMarker(() -> {
+							arm.setPosition(2);
+							slide.setPosition(.5);
+						})
+						.waitSeconds(2)
+						.addTemporalMarker(() -> {
+							arm.kill();
+							slide.kill();
+						})
 						.resetVelConstraint()
 						.build();
 			} break;
